@@ -1,3 +1,5 @@
+addpath('D:\matlab\homework\Digital_Image_Processing_Homework');
+
 % 加载图像
 original_image = imread('D:\pics\woman.jpg'); % 替换为你的文件路径
 
