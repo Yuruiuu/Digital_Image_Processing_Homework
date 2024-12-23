@@ -18,6 +18,7 @@ classdef ImageProcessingGUI < handle
         HistogramAxes      % 直方图显示区
         StatusLabel        % 状态信息标签
         ImageInfoLabel     % 图像信息标签
+        TargetResultAxes   % 提取结果显示区   <<< 新增属性
         
         % 增强参数
         LogParam = 1        % 对数变换参数c
@@ -117,6 +118,13 @@ classdef ImageProcessingGUI < handle
             processedPanel.Title = '处理后图像';
             app.ProcessedAxes = uiaxes(processedPanel);
             app.ProcessedAxes.Position = [10 10 460 280];
+            
+            
+            % 提取结果显示
+            targetPanel = uipanel(imageGrid);
+            targetPanel.Title = '提取结果';
+            app.TargetResultAxes = uiaxes(targetPanel); % 增加提取结果的显示区
+            app.TargetResultAxes.Position = [10 10 460 280];
         end
         
         function createControlPanels(app, grid)
@@ -131,6 +139,7 @@ classdef ImageProcessingGUI < handle
             app.createFilterTab();
             app.createEdgeDetectionTab();
             app.createFeatureExtractionTab();
+            app.createTargetExtractionTab();%目标提取
             app.createDeepLearningTab();
         end
         
@@ -358,6 +367,93 @@ classdef ImageProcessingGUI < handle
             app.EdgeThresholdSlider.ValueChangingFcn = @(sld,event) app.updateStatus(['边缘检测阈值: ', num2str(sld.Value)]);
         end
         
+        
+        %-----------修改------------
+        
+        function createTargetExtractionTab(app)
+            % 创建目标提取标签页
+            tab = uitab(app.ControlPanel, 'Title', '目标提取');
+
+            % 创建网格布局
+            grid = uigridlayout(tab, [4, 1]);
+            grid.RowHeight = {'fit', 'fit', '1x', 'fit'};
+            grid.Padding = [10, 10, 10, 10];
+            grid.RowSpacing = 10;
+
+            % 目标提取按钮
+            uibutton(grid, 'Text', '加载目标图像', ...
+                'ButtonPushedFcn', @(btn, event) app.loadTargetImage());
+
+            uibutton(grid, 'Text', '分割目标', ...
+                'ButtonPushedFcn', @(btn, event) app.segmentTarget());
+
+            uibutton(grid, 'Text', '显示提取结果', ...
+                'ButtonPushedFcn', @(btn, event) app.extractTarget());
+        end
+
+        function loadTargetImage(app)
+            % 加载目标图像
+            [file, path] = uigetfile({'*.jpg;*.png;*.bmp', '图像文件(*.jpg, *.png, *.bmp)'});
+            if isequal(file, 0)
+                app.updateStatus('未选择图像文件');
+                return;
+            end
+            imgPath = fullfile(path, file);
+            app.OriginalImage = imread(imgPath);
+
+            % 显示原始图像
+            imshow(app.OriginalImage, 'Parent', app.OriginalAxes);
+            app.updateStatus('加载图像成功');
+        end
+
+function segmentTarget(app)
+    % 图像分割 - 基于手动选择ROI的分割
+    if isempty(app.OriginalImage)
+        app.updateStatus('请先加载图像');
+        return;
+    end
+    
+    % 在原始图像中选择感兴趣区域 (ROI)
+    figure; imshow(app.OriginalImage); title('请在图中选择鸟的区域并双击确认');
+    h = drawpolygon(); % 手动绘制多边形区域
+    mask = createMask(h); % 创建掩码
+    close; % 关闭绘制窗口
+
+    % 使用活动轮廓法 (active contour) 细化分割结果
+    grayImage = rgb2gray(app.OriginalImage); % 转为灰度图
+    refinedMask = activecontour(grayImage, mask, 300); % 使用活动轮廓优化掩码
+
+    % 更新分割结果
+    app.ProcessedImage = refinedMask;
+
+    % 显示分割结果
+    imshow(refinedMask, 'Parent', app.ProcessedAxes, 'InitialMagnification', 'fit');
+    app.updateStatus('目标分割完成');
+end
+
+
+function extractTarget(app)
+    % 提取目标（结合原图与分割掩码）
+    if isempty(app.ProcessedImage)
+        app.updateStatus('请先进行图像分割');
+        return;
+    end
+    
+    % 提取分割目标
+    mask = app.ProcessedImage;
+    extractedTarget = bsxfun(@times, app.OriginalImage, cast(mask, 'like', app.OriginalImage));
+    
+    % 显示提取后的目标在提取结果显示区
+    imshow(extractedTarget, 'Parent', app.TargetResultAxes); % 在TargetResultAxes中显示结果
+    app.updateStatus('目标提取完成');
+end
+
+
+
+        
+        
+        %---------------------------
+      
         function createFeatureExtractionTab(app)
             tab = uitab(app.ControlPanel, 'Title', '特征提取');
             
