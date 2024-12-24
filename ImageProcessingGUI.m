@@ -54,7 +54,7 @@ classdef ImageProcessingGUI < handle
             
             % 创建网格布局
             mainGrid = uigridlayout(app.MainFigure, [3 3]);
-            mainGrid.ColumnWidth = {'2x', '1x', '1x'};
+            mainGrid.ColumnWidth = {'1x', '1x', '1x'};
             mainGrid.RowHeight = {30, '1x', '1x'};
             mainGrid.Padding = [10 10 10 10];
             mainGrid.ColumnSpacing = 10;
