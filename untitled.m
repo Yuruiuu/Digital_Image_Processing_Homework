@@ -22,7 +22,7 @@ function varargout = untitled(varargin)
 
 % Edit the above text to modify the response to help untitled
 
-% Last Modified by GUIDE v2.5 24-Dec-2024 10:42:47
+% Last Modified by GUIDE v2.5 25-Dec-2024 15:42:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,7 +73,7 @@ function varargout = untitled_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton1.
+% --- 读取图像
 function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -100,7 +100,7 @@ end
     handles.imageData2 = I;
     guidata(hObject, handles);
 
-% --- Executes on button press in pushbutton2.
+% --- 图像分类
 function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -118,14 +118,14 @@ if isfield(handles, 'imageData')
     name = readcell('biaoqian.xlsx');
     % 从 Excel 文件中获取中药材的相关信息
     species = name{label, 1};               % 种类
-%     intro = name{label, 2};                 % 简介
+     intro = name{label, 2};                 % 简介
 %     medicinal_value = name{label, 3};       % 药用价值和功效
 %     preservation_method = name{label, 4};   % 保存方式方法
 %     interactions = name{label, 5};          % 药物相互作用
     
         % 在GUI中显示识别结果
         set(handles.edit19, 'String', species);
-%         set(handles.edit18, 'String', accuracy);
+         set(handles.editConfidence, 'String', intro);
 
 %         set(handles.text31, 'String', preservation_method);
 %         set(handles.text11, 'String', intro);
@@ -253,7 +253,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton3.
+% --- 灰度化
 function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -271,6 +271,7 @@ if isfield(handles, 'imageData1')
         % 将灰度图像显示在axes2中
         axes(handles.axes2);
         imshow(grayImage);
+        title('灰度化');
         
         % 将灰度图保存到handles结构中
         handles.grayImage = grayImage;
@@ -279,6 +280,7 @@ if isfield(handles, 'imageData1')
         % 如果已经是灰度图像，直接显示
         axes(handles.axes2);
         imshow(img);
+        title('灰度化');
         handles.grayImage = img;
         guidata(hObject, handles);
     end
@@ -288,42 +290,9 @@ else
 end
 
 
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% 检查图像是否存在
-if isfield(handles, 'imageData1')
-    % 获取加载的图像数据
-    img = handles.imageData1;
-
-    % 判断图像是否为彩色图像（RGB）
-    if size(img, 3) == 3
-        % 如果是RGB图像，将其转换为灰度图像
-        grayImage = rgb2gray(img);
-    else
-        % 如果图像已经是灰度图，直接使用
-        grayImage = img;
-    end
-
-    % 执行二值化操作，使用自适应阈值
-    binaryImage = imbinarize(grayImage);
-    
-    % 将二值化后的图像显示在axes2中
-    axes(handles.axes2);
-    imshow(binaryImage);
-    
-    % 将二值化图像保存到handles结构中
-    handles.binaryImage = binaryImage;
-    guidata(hObject, handles);
-else
-    % 如果未加载图像，显示错误对话框
-    errordlg('请先选择一张图像。', '错误');
-end
 
 
-% --- Executes on button press in pushbutton5.
+% --- 线性变换
 function pushbutton5_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -355,6 +324,7 @@ if isfield(handles, 'imageData1')
     % 显示增强后的彩色图像在 axes2 中
     axes(handles.axes2);
     imshow(enhancedImage);
+    title('线性变换');
     
     % 将增强后的图像保存到 handles 结构中
     handles.enhancedImage = enhancedImage;
@@ -365,7 +335,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton6.
+% --- 中值滤波
 function pushbutton6_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -397,6 +367,7 @@ if isfield(handles, 'imageData1')
     % 显示滤波后的图像在 axes2 中
     axes(handles.axes2);
     imshow(filteredImage);
+    title('中值滤波');
     
     % 将滤波后的图像保存到 handles 结构中
     handles.filteredImage = filteredImage;
@@ -407,7 +378,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton7.
+% --- 左右翻转
 function pushbutton7_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -432,6 +403,7 @@ if isfield(handles, 'imageData1')
     % 将翻转后的图像显示在axes2中
     axes(handles.axes2);
     imshow(flippedImage);
+    title('左右翻转');
     
     % 更新handles结构
     guidata(hObject, handles);
@@ -441,7 +413,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton8.
+% --- 上下翻转
 function pushbutton8_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton8 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -466,6 +438,7 @@ if isfield(handles, 'imageData1')
     % 将翻转后的图像显示在axes2中
     axes(handles.axes2);
     imshow(flippedImage);
+    title('上下翻转');
     
     % 更新handles结构
     guidata(hObject, handles);
@@ -475,7 +448,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton9.
+% --- 直方图均衡化
 function pushbutton9_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton9 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -499,6 +472,7 @@ if isfield(handles, 'imageData1')
     % 将增强后的图像显示在axes2中
     axes(handles.axes2);
     imshow(enhancedImage);
+    title('直方图均衡化');
 
      axes(handles.axes3);
     [equalizedCounts, binLocations] = imhist(enhancedImage);
@@ -516,7 +490,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton10.
+% --- 直方图匹配
 function pushbutton10_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton10 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -542,6 +516,7 @@ if isfield(handles, 'imageData1') && isfield(handles, 'imageData2')
     % 将匹配后的图像显示在axes2中
     axes(handles.axes2);
     imshow(matchedImage);
+    title('直方图匹配');
     
     axes(handles.axes3);
     [equalizedCounts, binLocations] = imhist(matchedImage);
@@ -560,7 +535,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton11.
+% --- 高斯滤波
 function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -582,6 +557,7 @@ if isfield(handles, 'imageData1')
     % 将滤波后的图像显示在axes2中
     axes(handles.axes2);
     imshow(filteredImage);
+    title('高斯滤波');
     
     % 更新handles结构中的滤波图像
     handles.filteredImage = filteredImage;
@@ -592,7 +568,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton12.
+% --- 泊松噪声
 function pushbutton12_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton12 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -618,6 +594,7 @@ if isfield(handles, 'imageData1')
     % 将添加噪声后的图像显示在axes2中
     axes(handles.axes2);
     imshow(noisyImage);
+    title('泊松噪声');
     
     % 更新handles结构中的噪声图像
     handles.noisyImage = noisyImage;
@@ -628,7 +605,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton13.
+% --- 椒盐噪声
 function pushbutton13_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton13 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -650,6 +627,7 @@ if isfield(handles, 'imageData1')
     % 将添加噪声后的图像显示在axes2中
     axes(handles.axes2);
     imshow(noisyImage);
+    title('椒盐噪声');
     
     % 更新handles结构中的噪声图像
     handles.noisyImage = noisyImage;
@@ -660,7 +638,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton14.
+% --- 正弦噪声
 function pushbutton14_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton14 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -689,6 +667,7 @@ if isfield(handles, 'imageData1')
     % 将添加噪声后的图像显示在axes2中
     axes(handles.axes2);
     imshow(noisyImage);
+    title('正弦噪声');
     
     % 更新handles结构中的噪声图像
     handles.noisyImage = noisyImage;
@@ -699,7 +678,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton15.
+% --- 均值滤波
 function pushbutton15_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton15 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -721,6 +700,7 @@ if isfield(handles, 'imageData1')
     % 将滤波后的图像显示在axes2中
     axes(handles.axes2);
     imshow(filteredImage);
+    title('均值滤波');
     
     % 更新handles结构中的滤波图像
     handles.filteredImage = filteredImage;
@@ -731,7 +711,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton16.
+% --- 高斯滤波
 function pushbutton16_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton16 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -753,6 +733,7 @@ if isfield(handles, 'imageData1')
     % 将滤波后的图像显示在axes2中
     axes(handles.axes2);
     imshow(filteredImage);
+    title('高斯滤波');
     
     % 更新handles结构中的滤波图像
     handles.filteredImage = filteredImage;
@@ -801,7 +782,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton18.
+% --- 同态滤波
 function pushbutton18_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton18 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -845,6 +826,7 @@ if isfield(handles, 'imageData1')
     % 将处理后的图像显示在axes2中
     axes(handles.axes2);
     imshow(filteredImage);
+    title('同态滤波');
     
     % 更新handles结构中的滤波图像
     handles.filteredImage = filteredImage;
@@ -855,7 +837,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton19.
+% --- sobel边缘检测
 function pushbutton19_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton19 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -880,6 +862,7 @@ if isfield(handles, 'imageData1')
     % 将边缘检测后的图像显示在axes2中
     axes(handles.axes2);
     imshow(sobelEdgeImage);
+    title('sobel边缘检测');
     
     % 更新handles结构中的边缘检测图像
     handles.sobelEdgeImage = sobelEdgeImage;
@@ -890,7 +873,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton20.
+% --- roberts边缘检测
 function pushbutton20_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton20 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -915,6 +898,7 @@ if isfield(handles, 'imageData1')
     % 将边缘检测后的图像显示在axes2中
     axes(handles.axes2);
     imshow(robertsEdgeImage);
+    title('roberts边缘检测');
     
     % 更新handles结构中的边缘检测图像
     handles.robertsEdgeImage = robertsEdgeImage;
@@ -925,7 +909,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton21.
+% --- prewitt边缘检测
 function pushbutton21_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton21 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -956,6 +940,7 @@ function pushbutton21_Callback(hObject, eventdata, handles)
         axes(handles.axes2);
         cla; % 清除当前坐标轴
         imshow(edges);
+        title('prewitt边缘检测');
 
         % 更新 handles 结构中的边缘检测结果
         handles.edges = edges;
@@ -965,7 +950,7 @@ function pushbutton21_Callback(hObject, eventdata, handles)
         errordlg('请先选择一张图像。', '错误');
     end
 
-% --- Executes on button press in pushbutton22.
+% --- log边缘检测
 function pushbutton22_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton22 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -994,6 +979,7 @@ if isfield(handles, 'imageData1')
     % 将边缘检测后的图像显示在axes2中
     axes(handles.axes2);
     imshow(logEdgeImage);
+    title('log边缘检测');
     
     % 更新handles结构中的边缘检测图像
     handles.logEdgeImage = logEdgeImage;
@@ -1004,7 +990,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton23.
+% --- canny边缘检测
 function pushbutton23_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton23 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1029,6 +1015,7 @@ if isfield(handles, 'imageData1')
     % 将边缘检测后的图像显示在axes2中
     axes(handles.axes2);
     imshow(cannyEdgeImage);
+    title('canny边缘检测');
     
     % 更新handles结构中的边缘检测图像
     handles.cannyEdgeImage = cannyEdgeImage;
@@ -1039,7 +1026,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton24.
+% --- 拉普拉斯边缘检测
 function pushbutton24_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton24 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1068,6 +1055,7 @@ if isfield(handles, 'imageData1')
     % 将边缘检测后的图像显示在axes2中
     axes(handles.axes2);
     imshow(laplacianEdgeImage);
+    title('拉普拉斯边缘检测');
     
     % 更新handles结构中的边缘检测图像
     handles.laplacianEdgeImage = laplacianEdgeImage;
@@ -1078,7 +1066,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton25.
+% --- 傅里叶变换
 function pushbutton25_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton25 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1114,6 +1102,7 @@ if isfield(handles, 'imageData1')
     % 将频域图像显示在axes2中
     axes(handles.axes2);
     imshow(magnitude);
+    title('傅里叶变换');
     
     % 更新handles结构中的傅里叶变换图像
     handles.fourierImage = magnitude;
@@ -1308,7 +1297,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton26.
+% --- 灰度直方图
 function pushbutton26_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton26 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1325,6 +1314,7 @@ if isfield(handles, 'imageData1')
         % 将灰度图像显示在axes2中
         axes(handles.axes2);
         imshow(grayImage);
+        title('灰度图');
 
         % 将灰度图像显示在axes2中
         axes(handles.axes3);
@@ -1343,6 +1333,7 @@ if isfield(handles, 'imageData1')
         % 如果已经是灰度图像，直接显示
         axes(handles.axes2);
         imshow(img);
+        title('灰度图');
         handles.grayImage = img;
         guidata(hObject, handles);
     end
@@ -1352,7 +1343,7 @@ else
 end
 
 
-% --- Executes on button press in pushbutton27.
+% --- 图像缩小
 function pushbutton27_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton27 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1378,6 +1369,7 @@ function pushbutton27_Callback(hObject, eventdata, handles)
         % 将缩放后的图像显示在axes2中
         axes(handles.axes2);
         imshow(resizedImage);
+        title('图像缩小');
  
         % 更新handles结构
         guidata(hObject, handles);
@@ -1387,7 +1379,7 @@ function pushbutton27_Callback(hObject, eventdata, handles)
     end
 
 
-% --- Executes on button press in pushbutton28.
+% --- 指数变换
 function pushbutton28_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton28 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1429,6 +1421,7 @@ if isfield(handles, 'imageData1')
     % 显示增强后的彩色图像在 axes2 中
     axes(handles.axes2);
     imshow(enhancedImage);
+    title('指数变换');
     
     % 将增强后的图像保存到 handles 结构中
     handles.enhancedImage = enhancedImage;
@@ -1439,7 +1432,43 @@ else
 end
 
 
-% --- Executes on button press in pushbutton30.
+% --- 二值化
+function pushbutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% 检查图像是否存在
+if isfield(handles, 'imageData1')
+    % 获取加载的图像数据
+    img = handles.imageData1;
+
+    % 判断图像是否为彩色图像（RGB）
+    if size(img, 3) == 3
+        % 如果是RGB图像，将其转换为灰度图像
+        grayImage = rgb2gray(img);
+    else
+        % 如果图像已经是灰度图，直接使用
+        grayImage = img;
+    end
+
+    % 执行二值化操作，使用自适应阈值
+    binaryImage = imbinarize(grayImage);
+    
+    % 将二值化后的图像显示在axes7中
+    axes(handles.axes7);
+    imshow(binaryImage);
+    
+    % 将二值化图像保存到handles结构中
+    handles.binaryImage = binaryImage;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误对话框
+    errordlg('请先选择一张图像。', '错误');
+end
+
+
+
+% --- LBP特征提取
 function pushbutton30_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton30 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1483,6 +1512,96 @@ if isfield(handles, 'imageData1')
 
     % 归一化到[0, 1]范围
     lbpImage = mat2gray(lbpImage);
+    
+    % 显示LBP特征图
+    axes(handles.axes2);
+    imshow(lbpImage, []); % 显示 LBP 热图
+    title('原始图像的LBP 特征可视化');
+    
+    % 更新handles结构中的特征数据
+    handles.lbpFeatures = lbpFeatures;
+%     handles.hogFeatures = hogFeatures;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误对话框
+    errordlg('请先选择一张图像。', '错误');
+end
+if isfield(handles, 'binaryImage')
+    % 获取加载的图像数据
+    img = handles.binaryImage;
+
+    % 判断图像是否为彩色图像（RGB）
+    if size(img, 3) == 3
+        % 如果是RGB图像，将其转换为灰度图像
+        grayImage = rgb2gray(img);
+    else
+        % 如果是灰度图像，直接使用
+        grayImage = img;
+    end
+
+    % 获取图像的尺寸
+    [rows, cols] = size(grayImage);
+
+    % 应用LBP特征提取
+    % 这里采用滑动窗口方法对图像进行局部LBP特征提取
+    cellSize = [16 16];  
+    lbpFeatures2 = extractLBPFeatures(grayImage, 'CellSize', cellSize);  % 提取LBP特征
+
+    % 计算图像每块的LBP特征
+    numRows = floor(rows / cellSize(1));  % 行数
+    numCols = floor(cols / cellSize(2));  % 列数
+    lbpImage2 = zeros(numRows, numCols);   % 初始化LBP热图
+
+    % 用滑动窗口计算每块的LBP值
+    for r = 1:numRows
+        for c = 1:numCols
+            % 计算每块的LBP特征
+            block = grayImage((r-1)*cellSize(1)+1:r*cellSize(1), ...
+                               (c-1)*cellSize(2)+1:c*cellSize(2));
+            lbpBlock = extractLBPFeatures(block, 'CellSize', [8 8]);  % 小块LBP特征
+            lbpImage2(r, c) = mean(lbpBlock);  % 将小块的LBP特征取平均值
+        end
+    end
+
+    % 归一化到[0, 1]范围
+    lbpImage2 = mat2gray(lbpImage2);
+    
+    % 显示LBP特征图
+    axes(handles.axes3);
+    imshow(lbpImage2, []); % 显示 LBP 热图
+    title('提取目标的LBP 特征可视化');
+    
+    % 更新handles结构中的特征数据
+    handles.lbpFeatures2 = lbpFeatures2;
+%     handles.hogFeatures = hogFeatures;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误对话框
+    errordlg('请先进行目标提取。', '错误');
+end
+
+
+
+% --- HOG特征提取
+function pushbutton32_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton30 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% 检查图像是否存在
+if isfield(handles, 'imageData1')
+    % 获取加载的图像数据
+    img = handles.imageData1;
+
+    % 判断图像是否为彩色图像（RGB）
+    if size(img, 3) == 3
+        % 如果是RGB图像，将其转换为灰度图像
+        grayImage = rgb2gray(img);
+    else
+        % 如果是灰度图像，直接使用
+        grayImage = img;
+    end
+
+    % 获取图像的尺寸
+    [rows, cols] = size(grayImage);
 
     % 应用HOG特征提取，并生成可视化
     [hogFeatures, visualization] = extractHOGFeatures(grayImage, 'CellSize', [8 8]); 
@@ -1490,16 +1609,184 @@ if isfield(handles, 'imageData1')
     % 显示HOG特征可视化图
     axes(handles.axes2);
     plot(visualization);  
-    title('HOG 特征可视化');
-    
-    % 显示LBP特征图
-    axes(handles.axes3);
-    imshow(lbpImage, []); % 显示 LBP 热图
-    title('LBP 特征可视化');
+    title('原始图像的HOG 特征可视化');
     
     % 更新handles结构中的特征数据
-    handles.lbpFeatures = lbpFeatures;
     handles.hogFeatures = hogFeatures;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误对话框
+    errordlg('请先选择一张图像。', '错误');
+end
+if isfield(handles, 'binaryImage')
+    % 获取加载的图像数据
+    img = handles.binaryImage;
+
+    % 判断图像是否为彩色图像（RGB）
+    if size(img, 3) == 3
+        % 如果是RGB图像，将其转换为灰度图像
+        grayImage = rgb2gray(img);
+    else
+        % 如果是灰度图像，直接使用
+        grayImage = img;
+    end
+
+    % 获取图像的尺寸
+    [rows, cols] = size(grayImage);
+
+    % 应用HOG特征提取，并生成可视化
+    [hogFeatures2, visualization] = extractHOGFeatures(grayImage, 'CellSize', [8 8]); 
+
+    % 显示HOG特征可视化图
+    axes(handles.axes3);
+    plot(visualization);  
+    title('提取目标的的HOG 特征可视化');
+    
+    % 更新handles结构中的特征数据
+    handles.hogFeatures = hogFeatures2;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误对话框
+    errordlg('请先进行目标提取。', '错误');
+end
+
+
+
+% --- 对数变换
+function pushbutton31_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% 检查图像是否存在
+if isfield(handles, 'imageData1')
+    % 获取加载的图像数据
+    img = handles.imageData1;
+
+    % 判断图像是否为彩色图像（RGB）
+    if size(img, 3) == 3
+        % 如果是RGB图像，转换为灰度图像以进行对数变换
+        grayImage = rgb2gray(img);
+    else
+        % 如果图像已经是灰度图像，直接使用
+        grayImage = img;
+    end
+
+    % 对数变换，使用常见的公式：s = c * log(1 + double(I))
+    c = 1; % 常数，可以根据需要调整
+    logImage = c * log(1 + double(grayImage)); 
+    
+    % 对数变换后需要进行归一化到0-255范围
+    logImage = uint8(255 * mat2gray(logImage));  % 归一化并转为8位图像
+
+    % 将对数变换后的图像显示在axes2中
+    axes(handles.axes2);
+    imshow(logImage);
+    title('对数变换');
+
+    % 将对数变换后的图像保存到 handles 结构中
+    handles.logImage = logImage;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误提示
+    errordlg('请先选择一张图像。', '错误');
+end
+
+
+
+function editConfidence_Callback(hObject, eventdata, handles)
+% hObject    handle to editConfidence (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editConfidence as text
+%        str2double(get(hObject,'String')) returns contents of editConfidence as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function editConfidence_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editConfidence (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton32.
+% function pushbutton32_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton32 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- 图像旋转
+function pushbutton33_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonRotate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% 检查是否已加载图像
+if isfield(handles, 'imageData')
+    % 获取当前图像
+    img = handles.imageData;
+
+    % 记录旋转角度，初始为 0，如果不存在，初始化为 0
+    if ~isfield(handles, 'rotationAngle')
+        handles.rotationAngle = 0;
+    end
+
+    % 增加旋转角度
+    handles.rotationAngle = handles.rotationAngle + 10;
+
+    % 对图像进行旋转
+    rotatedImage = imrotate(img, handles.rotationAngle, 'bilinear', 'crop');
+
+    % 显示旋转后的图像
+    axes(handles.axes2);
+    imshow(rotatedImage);
+    title('图像旋转');
+
+    % 更新 handles 结构中的图像数据
+    handles.imageData = rotatedImage;
+    guidata(hObject, handles);
+else
+    % 如果未加载图像，显示错误对话框
+    errordlg('请先选择一张图像。', '错误');
+end
+
+
+% --- 图像放大
+function pushbutton34_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonZoomIn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% 检查是否已加载图像
+if isfield(handles, 'imageData')
+    % 获取当前图像
+    img = handles.imageData1;
+
+    % 放大系数，初始为 1，表示原始尺寸，如果不存在，初始化为 1
+    if ~isfield(handles, 'zoomFactor')
+        handles.zoomFactor = 1;
+    end
+
+    % 每次放大1.1倍
+    handles.zoomFactor = handles.zoomFactor * 1.1;
+
+    % 根据 zoomFactor 对图像进行放大
+    zoomedImage = imresize(img, handles.zoomFactor);
+
+    % 显示放大后的图像
+    axes(handles.axes2);
+    imshow(zoomedImage);
+
+    % 更新 handles 结构中的图像数据
+    handles.imageData1 = zoomedImage;
     guidata(hObject, handles);
 else
     % 如果未加载图像，显示错误对话框
